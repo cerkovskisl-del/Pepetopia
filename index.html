@@ -3,133 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pepetopia: Mega Edition</title>
+    <title>Pepetopia: SimCity Edition</title>
     <style>
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background: #112211;
-            background-image: radial-gradient(#1a331a 1px, transparent 1px);
-            background-size: 20px 20px;
+            background: #141f14;
             color: #e2f0d9;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             user-select: none;
         }
         h1 { 
-            margin: 10px 0 5px 0; 
-            text-shadow: 3px 3px 0px #000;
-            font-size: 36px;
-            letter-spacing: 1px;
+            margin: 5px 0; 
+            text-shadow: 2px 2px 0px #000;
+            font-size: 32px;
         }
-        .stats-container {
-            margin-bottom: 20px;
+        .dashboard {
+            background: #1e2f1e;
+            border: 2px solid #4e9a46;
+            border-radius: 8px;
+            padding: 10px 20px;
+            display: inline-flex;
+            gap: 25px;
+            align-items: center;
+            margin-bottom: 15px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
-        .stats {
-            font-size: 22px;
-            background: linear-gradient(135deg, #1e3a1e, #2d5a27);
-            padding: 12px 30px;
-            display: inline-block;
-            border-radius: 50px;
-            border: 3px solid #4e9a46;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-            font-weight: bold;
-        }
-        .stats span {
-            color: #2ecc71;
-            text-shadow: 0 0 5px rgba(46,204,113,0.3);
-        }
+        .stat-box { font-size: 16px; font-weight: bold; text-align: left; }
+        .stat-box span { color: #2ecc71; font-size: 18px; }
+        
+        /* RCI Pieprasījuma indikatori */
+        .demand-container { display: flex; flex-direction: column; gap: 3px; background: #111; padding: 5px; border-radius: 4px; }
+        .demand-bar { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: bold; }
+        .bar { height: 8px; width: 60px; background: #333; border-radius: 2px; overflow: hidden; }
+        .bar-fill { height: 100%; width: 0%; transition: width 0.3s; }
+        .r-fill { background: #2ecc71; }
+        .c-fill { background: #3498db; }
+
         .controls { 
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
         }
         button {
-            padding: 12px 24px;
-            font-size: 15px;
+            padding: 10px 18px;
+            font-size: 14px;
             cursor: pointer;
             border: 2px solid #2d5a27;
-            border-radius: 8px;
+            border-radius: 6px;
             background: #e2f0d9;
             color: #1e3a1e;
             font-weight: bold;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: 0.1s;
         }
-        button:hover { 
-            background: #c5e0b4;
-            transform: translateY(-2px);
-        }
-        button:active {
-            transform: translateY(1px);
-        }
+        button:hover { background: #c5e0b4; }
         button.active {
             background-color: #4e9a46;
             color: white;
-            border-color: #ffffff;
-            box-shadow: 0 0 15px #4e9a46;
+            border-color: #fff;
+            box-shadow: 0 0 10px #4e9a46;
         }
-        #btn-clear {
-            background-color: #922b21;
-            color: #fadbd8;
-            border-color: #78281f;
-        }
-        #btn-clear:hover { background-color: #b03a2e; }
-        #btn-clear.active { background-color: #cb4335; border-color: #fff; box-shadow: 0 0 15px #e74c3c; }
+        #btn-clear { background: #78281f; color: #f9ebd8; border-color: #5c1d16; }
+        #btn-clear.active { background: #c0392b; box-shadow: 0 0 10px #e74c3c; border-color: #fff; }
 
-        .game-wrapper {
-            position: relative;
-            display: inline-block;
-        }
         canvas {
-            border: 6px solid #4e9a46;
-            background: #142214;
+            border: 4px solid #4e9a46;
+            background: #192a19;
             cursor: crosshair;
-            box-shadow: 0px 15px 35px rgba(0,0,0,0.6);
-            border-radius: 8px;
-            display: block;
-        }
-        .info {
-            margin-top: 15px;
-            font-size: 15px;
-            color: #a9d18e;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.4;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.5);
             border-radius: 6px;
         }
+        .info { font-size: 13px; color: #a9d18e; margin-top: 8px; }
     </style>
 </head>
 <body>
 
-    <h1>🐸 Pepetopia: Mega Edition 🐸</h1>
+    <h1>🐸 Pepetopia: SimCity Edition 🐸</h1>
     
-    <div class="stats-container">
-        <div class="stats">
-            Kek-Mani: <span id="money-display">1000</span>$ | 
-            Peļņa: +<span id="income-display">0</span>$/sek
+    <div class="dashboard">
+        <div class="stat-box">Kek-Mani: <br><span id="money-display">1200</span>$</div>
+        <div class="stat-box">Peļņa: <br>+<span id="income-display">0</span>$/sek</div>
+        <div class="stat-box">Populācija: <br><span id="pop-display">0</span> 🐸</div>
+        
+        <div class="demand-container">
+            <div class="demand-bar">
+                <span>R</span>
+                <div class="bar"><div id="r-demand" class="bar-fill r-fill"></div></div>
+            </div>
+            <div class="demand-bar">
+                <span>C</span>
+                <div class="bar"><div id="c-demand" class="bar-fill c-fill"></div></div>
+            </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="btn-road" class="active" onclick="setTool('road')">Taka (10$)</button>
-        <button id="btn-house" onclick="setTool('house')">Pepes Būda (100$)</button>
+        <button id="btn-road" class="active" onclick="setTool('road')">Ceļš (10$)</button>
+        <button id="btn-zoneR" onclick="setTool('zoneR')">Dzīvojamā Zona (50$)</button>
+        <button id="btn-zoneC" onclick="setTool('zoneC')">Komerccentrs (60$)</button>
         <button id="btn-power" onclick="setTool('power')">Kek Stacija (400$)</button>
-        <button id="btn-clear" onclick="setTool('clear')">Nojaukt (50% Atgriešana)</button>
+        <button id="btn-clear" onclick="setTool('clear')">Nojaukt</button>
     </div>
     
-    <div class="game-wrapper">
-        <canvas id="gameCanvas" width="640" height="640"></canvas>
-    </div>
+    <canvas id="gameCanvas" width="640" height="640"></canvas>
 
     <div class="info">
-        💡 <b>Noteikumi:</b> Savieno takas līdz Kek Stacijai. Elektrība plūst pa vadiem taku vidū! <br>
-        ⚡ Elektrificētas būdas lēnām <b>Level UP</b>, maina izskatu un maksā milzu nodokļus!
+        🏗️ Iezīmē zaļās (R) vai zilās (C) zonas blakus ceļiem. Ja pilsētai vajadzēs iedzīvotājus, tur paši uzbūvēsies debesskrāpji!
     </div>
 
     <script src="game.js"></script>
