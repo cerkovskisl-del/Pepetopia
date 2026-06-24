@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimCity 2026: JS Edition</title>
+    <title>SimCity Mega-Engine 2026</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background: #111a11;
+            background: #0f140f;
             color: #e2f0d9;
             margin: 0;
             padding: 5px;
             user-select: none;
             overflow: hidden;
         }
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: #162616; border-bottom: 2px solid #3d6a33; }
-        h1 { margin: 5px 0; text-shadow: 2px 2px 0px #000; font-size: 24px; color: #5c9e4e; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: #111d11; border-bottom: 2px solid #3d6a33; }
+        h1 { margin: 5px 0; text-shadow: 2px 2px 0px #000; font-size: 22px; color: #5c9e4e; }
         
         .dashboard {
-            background: #1a2e1a;
+            background: #162616;
             border: 2px solid #3d6a33;
             border-radius: 4px;
             padding: 5px 15px;
@@ -27,37 +27,39 @@
             gap: 15px;
             align-items: center;
             justify-content: center;
-            margin: 5px auto;
-            max-width: 950px;
+            margin: 4px auto;
+            max-width: 1000px;
         }
-        .stat-box { font-size: 12px; font-weight: bold; text-align: left; }
-        .stat-box span { color: #2ecc71; font-size: 14px; }
+        .stat-box { font-size: 11px; font-weight: bold; text-align: left; }
+        .stat-box span { color: #2ecc71; font-size: 13px; }
         
         .tax-control { background: rgba(0,0,0,0.3); padding: 3px 6px; border-radius: 3px; font-size: 11px; }
         .tax-control button { padding: 1px 4px; margin-left: 2px; font-size: 10px; cursor: pointer; }
 
         .rci-container { display: flex; gap: 4px; background: #000; padding: 4px; border-radius: 3px; height: 30px; align-items: flex-end; }
-        .rci-bar { width: 12px; height: 0%; transition: height 0.3s; }
+        .rci-bar { width: 10px; height: 0%; transition: height 0.3s; }
         .rci-r { background: #2ecc71; }
         .rci-c { background: #3498db; }
         .rci-i { background: #f1c40f; }
 
-        .window-layout { display: flex; justify-content: center; gap: 10px; margin-top: 5px; }
+        .window-layout { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
         
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            background: #162616;
-            padding: 8px;
+            gap: 3px;
+            background: #111d11;
+            padding: 6px;
             border: 2px solid #3d6a33;
             border-radius: 4px;
-            width: 150px;
+            width: 160px;
+            max-height: 520px;
+            overflow-y: auto;
         }
-        .tool-sep { border-top: 1px solid #3d6a33; margin: 4px 0; padding-top: 4px; font-size: 10px; color: #888; font-weight: bold; }
+        .tool-sep { border-top: 1px solid #3d6a33; margin: 3px 0; padding-top: 3px; font-size: 9px; color: #888; font-weight: bold; text-align: left; }
         
         button.tool-btn {
-            padding: 6px;
+            padding: 5px;
             font-size: 11px;
             cursor: pointer;
             border: 1px solid #2d5027;
@@ -69,12 +71,13 @@
         }
         button.tool-btn:hover { background: #b0caa2; }
         button.tool-btn.active { background: #4e9a46; color: white; border-color: #fff; box-shadow: 0 0 5px #4e9a46; }
-        button#view-mode { background: #2980b9; color: white; border-color: #1f618d; text-align: center; }
-        button#view-mode.active { background: #8e44ad; border-color: #6c3483; }
+        
+        .sys-btn { background: #2980b9 !important; color: white !important; text-align: center !important; }
+        .sys-btn:hover { background: #1f618d !important; }
 
         canvas {
             border: 3px solid #3d6a33;
-            background: #192619;
+            background: #141f14;
             cursor: crosshair;
             box-shadow: 0px 5px 20px rgba(0,0,0,0.8);
         }
@@ -84,31 +87,31 @@
             color: #58d68d;
             font-family: 'Courier New', Courier, monospace;
             padding: 4px;
-            font-size: 12px;
+            font-size: 11px;
             border: 2px solid #333;
-            margin-top: 5px;
-            overflow: hidden;
-            white-space: nowrap;
-            max-width: 1020px;
+            margin-top: 4px;
+            max-width: 1040px;
             margin-left: auto;
             margin-right: auto;
+            text-align: left;
+            text-shadow: 0 0 2px #58d68d;
         }
     </style>
 </head>
 <body>
 
     <div class="main-header">
-        <h1>🏙️ SimCity: The Ultimate JS Simulator</h1>
+        <h1>🏙️ SimCity 2026: The Magnum Opus Engine</h1>
         <div class="tax-control">Nodokļi: <b id="tax-display">7%</b> <button onclick="changeTax(-1)">-</button><button onclick="changeTax(1)">+</button></div>
     </div>
     
     <div class="dashboard">
-        <div class="stat-box">Kase: <br><span id="money-display">3000</span>$</div>
-        <div class="stat-box">Mēneša Bilance: <br><span id="income-display">+0</span>$/m</div>
-        <div class="stat-box">Populācija: <br><span id="pop-display">0</span> iedz.</div>
-        <div class="stat-box">Skats: <br><span id="layer-display" style="color:#2ecc71;">Virszeme</span></div>
+        <div class="stat-box">Kase: <br><span id="money-display">3500</span>$</div>
+        <div class="stat-box">Bilance: <br><span id="income-display">+0</span>$/m</div>
+        <div class="stat-box">Iedzīvotāji: <br><span id="pop-display">0</span></div>
+        <div class="stat-box">Laiks / Režīms: <br><span id="time-display" style="color:#f1c40f;">Diena</span> (<span id="layer-display" style="color:#2ecc71;">Virszeme</span>)</div>
         
-        <div style="font-size: 10px; font-weight: bold; text-align: right;">RCI Pieprasījums:</div>
+        <div style="font-size: 9px; font-weight: bold; text-align: right;">RCI:</div>
         <div class="rci-container">
             <div id="bar-r" class="rci-bar rci-r" title="Residential"></div>
             <div id="bar-c" class="rci-bar rci-c" title="Commercial"></div>
@@ -118,21 +121,31 @@
 
     <div class="window-layout">
         <div class="sidebar">
-            <button id="view-mode" class="tool-btn" onclick="toggleViewLayer()">Skats: Virszeme</button>
+            <button id="view-mode" class="tool-btn sys-btn" onclick="toggleViewLayer()">🔧 Skats: Virszeme</button>
+            <div style="display:flex; gap:2px; margin-top:2px;">
+                <button class="tool-btn sys-btn" style="flex:1; background:#27ae60 !important;" onclick="saveGame()">💾 Saglabāt</button>
+                <button class="tool-btn sys-btn" style="flex:1; background:#e67e22 !important;" onclick="loadGame()">📂 Ielādēt</button>
+            </div>
             
             <div class="tool-sep">ZONĒŠANA</div>
             <button id="btn-zoneR" class="tool-btn" onclick="setTool('zoneR')">🟩 Dzīvojamā ($50)</button>
             <button id="btn-zoneC" class="tool-btn" onclick="setTool('zoneC')">🟦 Komercija ($60)</button>
             <button id="btn-zoneI" class="tool-btn" onclick="setTool('zoneI')">🟨 Industriālā ($40)</button>
             
-            <div class="tool-sep">TRANSPORTS / INFRA</div>
+            <div class="tool-sep">KOMUNIKĀCIJAS</div>
             <button id="btn-road" class="tool-btn active" onclick="setTool('road')">🟫 Ceļš ($10)</button>
             <button id="btn-wire" class="tool-btn" onclick="setTool('wire')">⚡ El. Vads ($5)</button>
             <button id="btn-pipe" class="tool-btn" onclick="setTool('pipe')">🔵 Caurule ($5)</button>
             
-            <div class="tool-sep">STRŪKTŪRAS</div>
-            <button id="btn-power" class="tool-btn" onclick="setTool('power')">🏭 El. Stacija ($500)</button>
-            <button id="btn-water" class="tool-btn" onclick="setTool('water')">💧 Ūdens Sūknis ($300)</button>
+            <div class="tool-sep">PRODUKCIJA</div>
+            <button id="btn-power" class="tool-btn" onclick="setTool('power')">🏭 El. Stacija ($600)</button>
+            <button id="btn-water" class="tool-btn" onclick="setTool('water')">💧 Sūkņu Stacija ($350)</button>
+            
+            <div class="tool-sep">SOCIĀLIE DIENESTI</div>
+            <button id="btn-police" class="tool-btn" onclick="setTool('police')">🚨 Policija ($300)</button>
+            <button id="btn-fire" class="tool-btn" onclick="setTool('fire')">🚒 Ugunsdzēsēji ($300)</button>
+            <button id="btn-hospital" class="tool-btn" onclick="setTool('hospital')">🏥 Slimnīca ($400)</button>
+            <button id="btn-school" class="tool-btn" onclick="setTool('school')">🎓 Skola ($250)</button>
             
             <div class="tool-sep">RĪKI</div>
             <button id="btn-clear" class="tool-btn" style="background:#a93226; color:white;" onclick="setTool('clear')">💣 Nojaukt ($10)</button>
@@ -141,7 +154,7 @@
         <canvas id="gameCanvas" width="860" height="520"></canvas>
     </div>
 
-    <div class="ticker-bar"><span id="ticker-text">Sveicināti mēra amatā! Sāciet būvēt ceļus un zonas...</span></div>
+    <div class="ticker-bar">📟 <span id="ticker-text">Sistēma gatava darbam. Laipni lūdzam, mēra kungs!</span></div>
 
     <script src="game.js"></script>
 </body>
