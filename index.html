@@ -3,137 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pepetopia: Ultimate SimCity Edition</title>
+    <title>SimCity 2026: JS Edition</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background: #151e15;
+            background: #111a11;
             color: #e2f0d9;
             margin: 0;
-            padding: 8px;
+            padding: 5px;
             user-select: none;
-            overflow-x: hidden;
+            overflow: hidden;
         }
-        h1 { margin: 2px 0; text-shadow: 2px 2px 0px #000; font-size: 26px; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: #162616; border-bottom: 2px solid #3d6a33; }
+        h1 { margin: 5px 0; text-shadow: 2px 2px 0px #000; font-size: 24px; color: #5c9e4e; }
         
         .dashboard {
-            background: #1f331f;
-            border: 2px solid #5c9e4e;
-            border-radius: 6px;
-            padding: 6px 12px;
-            display: inline-flex;
+            background: #1a2e1a;
+            border: 2px solid #3d6a33;
+            border-radius: 4px;
+            padding: 5px 15px;
+            display: flex;
             gap: 15px;
             align-items: center;
-            margin-bottom: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            flex-wrap: wrap;
             justify-content: center;
+            margin: 5px auto;
+            max-width: 950px;
         }
-        .stat-box { font-size: 13px; font-weight: bold; text-align: left; line-height: 1.3; }
-        .stat-box span { color: #2ecc71; font-size: 15px; }
+        .stat-box { font-size: 12px; font-weight: bold; text-align: left; }
+        .stat-box span { color: #2ecc71; font-size: 14px; }
         
-        /* Nodokļu kontrole */
-        .tax-control {
-            background: rgba(0,0,0,0.2);
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .tax-control button { padding: 2px 6px; font-size: 11px; }
+        .tax-control { background: rgba(0,0,0,0.3); padding: 3px 6px; border-radius: 3px; font-size: 11px; }
+        .tax-control button { padding: 1px 4px; margin-left: 2px; font-size: 10px; cursor: pointer; }
 
-        .demand-container { display: flex; flex-direction: column; gap: 2px; background: #111; padding: 4px; border-radius: 4px; }
-        .demand-bar { display: flex; align-items: center; gap: 4px; font-size: 9px; font-weight: bold; }
-        .bar { height: 6px; width: 45px; background: #333; border-radius: 1px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 0%; transition: width 0.3s; }
-        .r-fill { background: #2ecc71; }
-        .c-fill { background: #3498db; }
+        .rci-container { display: flex; gap: 4px; background: #000; padding: 4px; border-radius: 3px; height: 30px; align-items: flex-end; }
+        .rci-bar { width: 12px; height: 0%; transition: height 0.3s; }
+        .rci-r { background: #2ecc71; }
+        .rci-c { background: #3498db; }
+        .rci-i { background: #f1c40f; }
 
-        .controls { 
-            margin-bottom: 8px;
+        .window-layout { display: flex; justify-content: center; gap: 10px; margin-top: 5px; }
+        
+        .sidebar {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             gap: 4px;
-            flex-wrap: wrap;
+            background: #162616;
+            padding: 8px;
+            border: 2px solid #3d6a33;
+            border-radius: 4px;
+            width: 150px;
         }
-        button {
-            padding: 6px 12px;
-            font-size: 12px;
+        .tool-sep { border-top: 1px solid #3d6a33; margin: 4px 0; padding-top: 4px; font-size: 10px; color: #888; font-weight: bold; }
+        
+        button.tool-btn {
+            padding: 6px;
+            font-size: 11px;
             cursor: pointer;
-            border: 2px solid #345e2a;
-            border-radius: 4px;
-            background: #e2f0d9;
-            color: #1e3a1e;
+            border: 1px solid #2d5027;
+            border-radius: 3px;
+            background: #cbdcc0;
+            color: #122411;
             font-weight: bold;
-            transition: 0.1s;
+            text-align: left;
         }
-        button:hover { background: #c5e0b4; }
-        button.active {
-            background-color: #4e9a46;
-            color: white;
-            border-color: #fff;
-            box-shadow: 0 0 6px #4e9a46;
-        }
-        #btn-clear { background: #78281f; color: #f9ebd8; border-color: #5c1d16; }
-        #btn-clear.active { background: #c0392b; border-color: #fff; }
+        button.tool-btn:hover { background: #b0caa2; }
+        button.tool-btn.active { background: #4e9a46; color: white; border-color: #fff; box-shadow: 0 0 5px #4e9a46; }
+        button#view-mode { background: #2980b9; color: white; border-color: #1f618d; text-align: center; }
+        button#view-mode.active { background: #8e44ad; border-color: #6c3483; }
 
-        .game-container { position: relative; display: inline-block; }
         canvas {
-            border: 4px solid #4e9a46;
-            background: #1c2e1c;
+            border: 3px solid #3d6a33;
+            background: #192619;
             cursor: crosshair;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
-            border-radius: 4px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.8);
         }
-        .info { font-size: 12px; color: #a9d18e; margin-top: 4px; max-width: 750px; margin-left: auto; margin-right: auto; line-height: 1.3; }
+        
+        .ticker-bar {
+            background: #000;
+            color: #58d68d;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 4px;
+            font-size: 12px;
+            border: 2px solid #333;
+            margin-top: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+            max-width: 1020px;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 <body>
 
-    <h1>🏙️ Pepetopia: Ultimate SimCity Simulator 🏙️</h1>
+    <div class="main-header">
+        <h1>🏙️ SimCity: The Ultimate JS Simulator</h1>
+        <div class="tax-control">Nodokļi: <b id="tax-display">7%</b> <button onclick="changeTax(-1)">-</button><button onclick="changeTax(1)">+</button></div>
+    </div>
     
     <div class="dashboard">
-        <div class="stat-box">Kase:<br><span id="money-display">2000</span>$</div>
-        <div class="stat-box">Bilance:<br><span id="income-display">+0</span>$/s</div>
-        <div class="stat-box">Iedzīvotāji:<br><span id="pop-display">0</span> 🐸</div>
-        <div class="stat-box">Apgāde:<br>⚡<span id="power-pct">0</span>% | 💧<span id="water-pct">0</span>%</div>
+        <div class="stat-box">Kase: <br><span id="money-display">3000</span>$</div>
+        <div class="stat-box">Mēneša Bilance: <br><span id="income-display">+0</span>$/m</div>
+        <div class="stat-box">Populācija: <br><span id="pop-display">0</span> iedz.</div>
+        <div class="stat-box">Skats: <br><span id="layer-display" style="color:#2ecc71;">Virszeme</span></div>
         
-        <div class="tax-control">
-            Nodokļi: <span id="tax-display">7</span>%
-            <button onclick="changeTax(-1)">-</button>
-            <button onclick="changeTax(1)">+</button>
-        </div>
-
-        <div class="demand-container">
-            <div class="demand-bar"><span>R</span><div class="bar"><div id="r-demand" class="bar-fill r-fill"></div></div></div>
-            <div class="demand-bar"><span>C</span><div class="bar"><div id="c-demand" class="bar-fill c-fill"></div></div></div>
+        <div style="font-size: 10px; font-weight: bold; text-align: right;">RCI Pieprasījums:</div>
+        <div class="rci-container">
+            <div id="bar-r" class="rci-bar rci-r" title="Residential"></div>
+            <div id="bar-c" class="rci-bar rci-c" title="Commercial"></div>
+            <div id="bar-i" class="rci-bar rci-i" title="Industrial"></div>
         </div>
     </div>
 
-    <div class="controls">
-        <button id="btn-road" class="active" onclick="setTool('road')">Ceļš ($10)</button>
-        <button id="btn-zoneR" onclick="setTool('zoneR')">Dzīvojamā R ($50)</button>
-        <button id="btn-zoneC" onclick="setTool('zoneC')">Komercija C ($60)</button>
-        <button id="btn-power" onclick="setTool('power')">Kek Stacija ($400)</button>
-        <button id="btn-water" onclick="setTool('water')">Ūdens Tornis ($250)</button>
-        <button id="btn-police" onclick="setTool('police')">Policija P ($300)</button>
-        <button id="btn-fire" onclick="setTool('fire')">Ugunsdzēsēji F ($300)</button>
-        <button id="btn-clear" onclick="setTool('clear')">Nojaukt</button>
-    </div>
-    
-    <div class="game-container">
-        <canvas id="gameCanvas" width="850" height="520"></canvas>
+    <div class="window-layout">
+        <div class="sidebar">
+            <button id="view-mode" class="tool-btn" onclick="toggleViewLayer()">Skats: Virszeme</button>
+            
+            <div class="tool-sep">ZONĒŠANA</div>
+            <button id="btn-zoneR" class="tool-btn" onclick="setTool('zoneR')">🟩 Dzīvojamā ($50)</button>
+            <button id="btn-zoneC" class="tool-btn" onclick="setTool('zoneC')">🟦 Komercija ($60)</button>
+            <button id="btn-zoneI" class="tool-btn" onclick="setTool('zoneI')">🟨 Industriālā ($40)</button>
+            
+            <div class="tool-sep">TRANSPORTS / INFRA</div>
+            <button id="btn-road" class="tool-btn active" onclick="setTool('road')">🟫 Ceļš ($10)</button>
+            <button id="btn-wire" class="tool-btn" onclick="setTool('wire')">⚡ El. Vads ($5)</button>
+            <button id="btn-pipe" class="tool-btn" onclick="setTool('pipe')">🔵 Caurule ($5)</button>
+            
+            <div class="tool-sep">STRŪKTŪRAS</div>
+            <button id="btn-power" class="tool-btn" onclick="setTool('power')">🏭 El. Stacija ($500)</button>
+            <button id="btn-water" class="tool-btn" onclick="setTool('water')">💧 Ūdens Sūknis ($300)</button>
+            
+            <div class="tool-sep">RĪKI</div>
+            <button id="btn-clear" class="tool-btn" style="background:#a93226; color:white;" onclick="setTool('clear')">💣 Nojaukt ($10)</button>
+        </div>
+        
+        <canvas id="gameCanvas" width="860" height="520"></canvas>
     </div>
 
-    <div class="info">
-        📊 <b>SimCity Vadības Instrukcija:</b> Nodrošini pilsētai visu nepieciešamo infrastruktūru. <br>
-        Uzbūvē **Policiju (P)** un **Ugunsdzēsējus (F)**, lai pasargātu rajonus no noziedzības 🦹 un ugunsgrēkiem 🟥. <br>
-        Sabalansē nodokļus – pārāk augsti nodokļi (virs 9%) izraisīs ekonomisko krīzi un cilvēku bēgšanu no pilsētas!
-    </div>
+    <div class="ticker-bar"><span id="ticker-text">Sveicināti mēra amatā! Sāciet būvēt ceļus un zonas...</span></div>
 
     <script src="game.js"></script>
 </body>
