@@ -3,51 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pepetopia: Isometric SimCity</title>
+    <title>Pepetopia: Ultimate SimCity Edition</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background: #1a251a;
+            background: #151e15;
             color: #e2f0d9;
             margin: 0;
-            padding: 10px;
+            padding: 8px;
             user-select: none;
             overflow-x: hidden;
         }
-        h1 { margin: 5px 0; text-shadow: 2px 2px 0px #000; font-size: 28px; }
+        h1 { margin: 2px 0; text-shadow: 2px 2px 0px #000; font-size: 26px; }
         
         .dashboard {
-            background: #223a22;
+            background: #1f331f;
             border: 2px solid #5c9e4e;
             border-radius: 6px;
-            padding: 8px 15px;
+            padding: 6px 12px;
             display: inline-flex;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            margin-bottom: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        .stat-box { font-size: 14px; font-weight: bold; text-align: left; line-height: 1.3; }
-        .stat-box span { color: #2ecc71; font-size: 16px; }
+        .stat-box { font-size: 13px; font-weight: bold; text-align: left; line-height: 1.3; }
+        .stat-box span { color: #2ecc71; font-size: 15px; }
         
-        .demand-container { display: flex; flex-direction: column; gap: 3px; background: #111; padding: 4px; border-radius: 4px; }
-        .demand-bar { display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: bold; }
-        .bar { height: 6px; width: 50px; background: #333; border-radius: 1px; overflow: hidden; }
+        /* Nodokļu kontrole */
+        .tax-control {
+            background: rgba(0,0,0,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .tax-control button { padding: 2px 6px; font-size: 11px; }
+
+        .demand-container { display: flex; flex-direction: column; gap: 2px; background: #111; padding: 4px; border-radius: 4px; }
+        .demand-bar { display: flex; align-items: center; gap: 4px; font-size: 9px; font-weight: bold; }
+        .bar { height: 6px; width: 45px; background: #333; border-radius: 1px; overflow: hidden; }
         .bar-fill { height: 100%; width: 0%; transition: width 0.3s; }
         .r-fill { background: #2ecc71; }
         .c-fill { background: #3498db; }
 
         .controls { 
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             flex-wrap: wrap;
         }
         button {
-            padding: 8px 14px;
-            font-size: 13px;
+            padding: 6px 12px;
+            font-size: 12px;
             cursor: pointer;
             border: 2px solid #345e2a;
             border-radius: 4px;
@@ -61,35 +76,38 @@
             background-color: #4e9a46;
             color: white;
             border-color: #fff;
-            box-shadow: 0 0 8px #4e9a46;
+            box-shadow: 0 0 6px #4e9a46;
         }
         #btn-clear { background: #78281f; color: #f9ebd8; border-color: #5c1d16; }
         #btn-clear.active { background: #c0392b; border-color: #fff; }
 
-        .game-container {
-            position: relative;
-            display: inline-block;
-        }
+        .game-container { position: relative; display: inline-block; }
         canvas {
             border: 4px solid #4e9a46;
-            background: #203320;
+            background: #1c2e1c;
             cursor: crosshair;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
             border-radius: 4px;
         }
-        .info { font-size: 12px; color: #a9d18e; margin-top: 5px; max-width: 700px; margin-left: auto; margin-right: auto; }
+        .info { font-size: 12px; color: #a9d18e; margin-top: 4px; max-width: 750px; margin-left: auto; margin-right: auto; line-height: 1.3; }
     </style>
 </head>
 <body>
 
-    <h1>🏢 Pepetopia: Isometric SimCity 🏢</h1>
+    <h1>🏙️ Pepetopia: Ultimate SimCity Simulator 🏙️</h1>
     
     <div class="dashboard">
-        <div class="stat-box">Budžets:<br><span id="money-display">1500</span>$</div>
-        <div class="stat-box">Ienākumi:<br>+<span id="income-display">0</span>$/s</div>
-        <div class="stat-box">Pilsoņi:<br><span id="pop-display">0</span> 🐸</div>
-        <div class="stat-box">Infrastruktūra:<br>⚡<span id="power-pct">0</span>% | 💧<span id="water-pct">0</span>%</div>
+        <div class="stat-box">Kase:<br><span id="money-display">2000</span>$</div>
+        <div class="stat-box">Bilance:<br><span id="income-display">+0</span>$/s</div>
+        <div class="stat-box">Iedzīvotāji:<br><span id="pop-display">0</span> 🐸</div>
+        <div class="stat-box">Apgāde:<br>⚡<span id="power-pct">0</span>% | 💧<span id="water-pct">0</span>%</div>
         
+        <div class="tax-control">
+            Nodokļi: <span id="tax-display">7</span>%
+            <button onclick="changeTax(-1)">-</button>
+            <button onclick="changeTax(1)">+</button>
+        </div>
+
         <div class="demand-container">
             <div class="demand-bar"><span>R</span><div class="bar"><div id="r-demand" class="bar-fill r-fill"></div></div></div>
             <div class="demand-bar"><span>C</span><div class="bar"><div id="c-demand" class="bar-fill c-fill"></div></div></div>
@@ -97,21 +115,24 @@
     </div>
 
     <div class="controls">
-        <button id="btn-road" class="active" onclick="setTool('road')">Šoseja (10$)</button>
-        <button id="btn-zoneR" onclick="setTool('zoneR')">Dzīvojamā (50$)</button>
-        <button id="btn-zoneC" onclick="setTool('zoneC')">Komercija (60$)</button>
-        <button id="btn-power" onclick="setTool('power')">Kek Stacija (400$)</button>
-        <button id="btn-water" onclick="setTool('water')">Ūdens Tornis (250$)</button>
+        <button id="btn-road" class="active" onclick="setTool('road')">Ceļš ($10)</button>
+        <button id="btn-zoneR" onclick="setTool('zoneR')">Dzīvojamā R ($50)</button>
+        <button id="btn-zoneC" onclick="setTool('zoneC')">Komercija C ($60)</button>
+        <button id="btn-power" onclick="setTool('power')">Kek Stacija ($400)</button>
+        <button id="btn-water" onclick="setTool('water')">Ūdens Tornis ($250)</button>
+        <button id="btn-police" onclick="setTool('police')">Policija P ($300)</button>
+        <button id="btn-fire" onclick="setTool('fire')">Ugunsdzēsēji F ($300)</button>
         <button id="btn-clear" onclick="setTool('clear')">Nojaukt</button>
     </div>
     
     <div class="game-container">
-        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        <canvas id="gameCanvas" width="850" height="520"></canvas>
     </div>
 
     <div class="info">
-        📐 <b>Izometriskā vadība:</b> Pilsēta ir 3D skatā! ⚡Kek Stacija dod strāvu pa ceļiem. 💧Ūdens Tornis dod ūdeni blakus esošajām zonām. <br>
-        Mega-debesskrāpji (Lvl 3) uzbūvēsies tikai tad, ja būs nodrošināti abi resursi un pilsētas pieprasījums būs augsts!
+        📊 <b>SimCity Vadības Instrukcija:</b> Nodrošini pilsētai visu nepieciešamo infrastruktūru. <br>
+        Uzbūvē **Policiju (P)** un **Ugunsdzēsējus (F)**, lai pasargātu rajonus no noziedzības 🦹 un ugunsgrēkiem 🟥. <br>
+        Sabalansē nodokļus – pārāk augsti nodokļi (virs 9%) izraisīs ekonomisko krīzi un cilvēku bēgšanu no pilsētas!
     </div>
 
     <script src="game.js"></script>
