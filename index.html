@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepetopia: 2D Simulator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background: #1e3a1e; /* Tumši zaļš fons */
+            color: #e2f0d9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { 
+            margin-bottom: 5px; 
+            text-shadow: 2px 2px #000;
+        }
+        .stats {
+            font-size: 22px;
+            margin-bottom: 15px;
+            background: #2d5a27;
+            padding: 12px 25px;
+            display: inline-block;
+            border-radius: 8px;
+            border: 2px solid #4e9a46;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+        .controls { margin-bottom: 15px; }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 2px solid #2d5a27;
+            border-radius: 6px;
+            background: #e2f0d9;
+            color: #1e3a1e;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        button:hover { background: #c5e0b4; }
+        button.active {
+            background-color: #4e9a46;
+            color: white;
+            border-color: #fff;
+            box-shadow: 0 0 10px #4e9a46;
+        }
+        canvas {
+            border: 5px solid #4e9a46;
+            background: #111;
+            cursor: pointer;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.5);
+            border-radius: 4px;
+        }
+        .info {
+            margin-top: 15px;
+            font-size: 15px;
+            color: #a9d18e;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🐸 Pepetopia: Ceļš uz Kekropoli 🐸</h1>
+    
+    <div class="stats">
+        Kek-Mani (Nauda): <span id="money-display">1000</span>$ | 
+        Peļņa: +<span id="income-display">0</span>$/sek
+    </div>
+
+    <div class="controls">
+        <button id="btn-road" class="active" onclick="setTool('road')">Taka (10$)</button>
+        <button id="btn-house" onclick="setTool('house')">Pepes Būda (100$)</button>
+        <button id="btn-power" onclick="setTool('power')">Kek Stacija (400$)</button>
+        <button id="btn-clear" onclick="setTool('clear')">Nojaukt</button>
+    </div>
+    
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+    <div class="info">
+        Feels Bad Man... Pepes būdām vajag savienojumu pa takām līdz Kek Stacijai, lai iedegtos "Feels Good" elektrība!
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
