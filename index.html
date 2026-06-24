@@ -3,86 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pepetopia: 2D Simulator</title>
+    <title>Pepetopia: Mega Edition</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             text-align: center;
-            background: #1e3a1e; /* Tumši zaļš fons */
+            background: #112211;
+            background-image: radial-gradient(#1a331a 1px, transparent 1px);
+            background-size: 20px 20px;
             color: #e2f0d9;
             margin: 0;
             padding: 20px;
+            user-select: none;
         }
         h1 { 
-            margin-bottom: 5px; 
-            text-shadow: 2px 2px #000;
+            margin: 10px 0 5px 0; 
+            text-shadow: 3px 3px 0px #000;
+            font-size: 36px;
+            letter-spacing: 1px;
+        }
+        .stats-container {
+            margin-bottom: 20px;
         }
         .stats {
             font-size: 22px;
-            margin-bottom: 15px;
-            background: #2d5a27;
-            padding: 12px 25px;
+            background: linear-gradient(135deg, #1e3a1e, #2d5a27);
+            padding: 12px 30px;
             display: inline-block;
-            border-radius: 8px;
-            border: 2px solid #4e9a46;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border-radius: 50px;
+            border: 3px solid #4e9a46;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             font-weight: bold;
         }
-        .controls { margin-bottom: 15px; }
+        .stats span {
+            color: #2ecc71;
+            text-shadow: 0 0 5px rgba(46,204,113,0.3);
+        }
+        .controls { 
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 0 5px;
+            padding: 12px 24px;
+            font-size: 15px;
             cursor: pointer;
             border: 2px solid #2d5a27;
-            border-radius: 6px;
+            border-radius: 8px;
             background: #e2f0d9;
             color: #1e3a1e;
             font-weight: bold;
-            transition: 0.2s;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
-        button:hover { background: #c5e0b4; }
+        button:hover { 
+            background: #c5e0b4;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
         button.active {
             background-color: #4e9a46;
             color: white;
-            border-color: #fff;
-            box-shadow: 0 0 10px #4e9a46;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px #4e9a46;
+        }
+        #btn-clear {
+            background-color: #922b21;
+            color: #fadbd8;
+            border-color: #78281f;
+        }
+        #btn-clear:hover { background-color: #b03a2e; }
+        #btn-clear.active { background-color: #cb4335; border-color: #fff; box-shadow: 0 0 15px #e74c3c; }
+
+        .game-wrapper {
+            position: relative;
+            display: inline-block;
         }
         canvas {
-            border: 5px solid #4e9a46;
-            background: #111;
-            cursor: pointer;
-            box-shadow: 0px 10px 25px rgba(0,0,0,0.5);
-            border-radius: 4px;
+            border: 6px solid #4e9a46;
+            background: #142214;
+            cursor: crosshair;
+            box-shadow: 0px 15px 35px rgba(0,0,0,0.6);
+            border-radius: 8px;
+            display: block;
         }
         .info {
             margin-top: 15px;
             font-size: 15px;
             color: #a9d18e;
-            font-style: italic;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 6px;
         }
     </style>
 </head>
 <body>
 
-    <h1>🐸 Pepetopia: Ceļš uz Kekropoli 🐸</h1>
+    <h1>🐸 Pepetopia: Mega Edition 🐸</h1>
     
-    <div class="stats">
-        Kek-Mani (Nauda): <span id="money-display">1000</span>$ | 
-        Peļņa: +<span id="income-display">0</span>$/sek
+    <div class="stats-container">
+        <div class="stats">
+            Kek-Mani: <span id="money-display">1000</span>$ | 
+            Peļņa: +<span id="income-display">0</span>$/sek
+        </div>
     </div>
 
     <div class="controls">
         <button id="btn-road" class="active" onclick="setTool('road')">Taka (10$)</button>
         <button id="btn-house" onclick="setTool('house')">Pepes Būda (100$)</button>
         <button id="btn-power" onclick="setTool('power')">Kek Stacija (400$)</button>
-        <button id="btn-clear" onclick="setTool('clear')">Nojaukt</button>
+        <button id="btn-clear" onclick="setTool('clear')">Nojaukt (50% Atgriešana)</button>
     </div>
     
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    <div class="game-wrapper">
+        <canvas id="gameCanvas" width="640" height="640"></canvas>
+    </div>
 
     <div class="info">
-        Feels Bad Man... Pepes būdām vajag savienojumu pa takām līdz Kek Stacijai, lai iedegtos "Feels Good" elektrība!
+        💡 <b>Noteikumi:</b> Savieno takas līdz Kek Stacijai. Elektrība plūst pa vadiem taku vidū! <br>
+        ⚡ Elektrificētas būdas lēnām <b>Level UP</b>, maina izskatu un maksā milzu nodokļus!
     </div>
 
     <script src="game.js"></script>
